@@ -27,9 +27,9 @@ class Video1(GraphScene):
         self.wait()
         self.play(FadeOut(title));
         self.wait();
-        text = TextMobject("Consider a rectangular pulse")
+        text = TextMobject("Consider a rectangular pulse-")
         math = TexMobject("x_{N}[n] = "
-        	"\\begin{cases} 1,& \\text{if } |n|\\leq N/2\\\\ 0  & \\text{otherwise} \\end{cases}"
+        	"\\begin{cases} 1,& \\text{if } 0 < n \\l N\\\\ 0  & \\text{otherwise} \\end{cases}"
         	)
         VGroup(text, math).arrange(DOWN)
         self.play(
@@ -57,7 +57,7 @@ class Video1(GraphScene):
         	FadeOut(math),
         	)
         text = TextMobject("The fourier transform of this function is")
-        string = "X(f) = \\frac{sin({" +str(N) +"}\\pi f)}{\\pi f}"
+        string = "X(w) = \\frac{2sin({" +str(N/2) +"}w)}{w}"
         fourier = TexMobject(string)
         VGroup(text, fourier).arrange(DOWN)
         self.play(Write(text))
@@ -68,9 +68,9 @@ class Video1(GraphScene):
             FadeOut(text),
             FadeOut(fourier)
         )
-        text = TextMobject("Now we will sample X(f)\n"
-        	"at a frequency of $f=\\frac{2k\\pi f}{5}$")
-        text2 = TextMobject("where $k\\in {0,1,2,.."+str(N)+"}$")
+        text = TextMobject("Now we will sample $|X(w)|$\n"
+        	"at $\\frac{kw}{"+str(N/2)+"}$")
+        text2 = TextMobject("where $k\\in {0,1,.."+str(N-1)+"}$")
 
         VGroup(text, text2).arrange(DOWN)
         self.play(Write(text),)
@@ -88,7 +88,7 @@ class Video1(GraphScene):
         #vert_line = self.get_vertical_line_to_graph(TAU,func_graph,color=YELLOW)
         self.play(Write(func_graph))
         #self.play(ShowCreation(vert_line))
-        for i in range(-N//2, 1+N//2):
+        for i in range(0, N):
         	if(not self.rect(i)): continue
         	point = Dot(self.coords_to_point(i,1))
         	vert_line = self.get_vertical_line_to_graph(i,func_graph,color=YELLOW)
@@ -97,9 +97,6 @@ class Video1(GraphScene):
         self.play(FadeOut(func_graph))
         self.wait(2)
         self.clear()
-
-    def rect(self, x):
-        return float(abs(x)<=N/2)
 
     def setup_axespt1(self):
         # GraphScene.setup_axes(self, animate = True)
@@ -110,6 +107,8 @@ class Video1(GraphScene):
         self.x_max = 10
         self.y_max = 2
         self.y_min = -0.5
+        self.x_axis_label = "$t$"
+        self.y_axis_label = "$y$"
         init_val_x = -10
         step_x = 2
         end_val_x = 10
@@ -137,15 +136,15 @@ class Video1(GraphScene):
     	self.setup_axespt2()
     	func_graph= self.get_graph(self.sinc, YELLOW, xmin = -1.0, xmax = 1.0)
     	self.play(ShowCreation(func_graph))
-    	for i in range(0, N+1):
-    		point = Dot(self.coords_to_point(2*i/N-1,self.sinc(2*i/N-1)))
-    		vert_line = self.get_vertical_line_to_graph(2*i/N-1,func_graph)
+    	for i in range(0, N):
+    		point = Dot(self.coords_to_point(2*PI*i/N,self.sinc(2*PI*i/N)))
+    		vert_line = self.get_vertical_line_to_graph(2*PI*i/N,func_graph)
     		self.play(ShowCreation(vert_line))
     		self.add(point)
-    	for i in range(N+1):
-    		y = self.sinc(2*i/N-1) 
-    		y = N if y == N else 0;
-    		string = "sample \\#"+str(i+1)+"={}%.5f".format(y)
+    	for i in range(0, N):
+    		y = self.sinc(2*PI*i/N) 
+    		y = str(N) if y == N else str(0);
+    		string = "sample \\#"+str(i+1)+"="+y
     		text=TextMobject(string)
     		text.move_to(2*RIGHT+3*(2*i/N-1)*DOWN)
     		text.arrange(RIGHT, center=False, aligned_edge=LEFT) 
@@ -155,17 +154,21 @@ class Video1(GraphScene):
     	self.clear()
 
     def setup_axespt2(self):
-        self.graph_origin = 2.5 * DOWN + 4 * LEFT
+        self.graph_origin = 2.5 * DOWN + 5 * LEFT
         #self.x_axis.label_direction = UP
         # self.y_axis.label_direction = LEFT*1.5
         self.y_axis.add_numbers(*[N])
-        self.x_min = -1
-        self.x_max = 1
+        self.x_min = 0
+        self.x_max = 2*PI
+        self.x_leftmost_tick = 0;
         self.y_max = N+1
         self.y_min = -1
-        init_val_x = -1
-        step_x = 0.5
-        end_val_x = 1
+        self.x_axis_label = "$w$"
+        self.y_axis_label = "$|X(w)|$"
+        # self.x_label.move_to(0.5*LEFT)
+        init_val_x = 0
+        step_x = 1
+        end_val_x = 2*PI
         values_decimal_x=list(np.arange(init_val_x,end_val_x+step_x,step_x))
         list_x=[*["%.1f"%i for i in values_decimal_x]]
         values_x = [
@@ -181,14 +184,18 @@ class Video1(GraphScene):
             self.x_axis_labels.add(tex)
         self.play(
             Write(self.x_axis_labels),
-            # Write(self.x_axis),
-            # Write(self.y_axis)
         )
 
-    #functions
+    #functions to graph
     def sinc(self, f):
-    	if(f == 0): return N
-    	return np.sin(N*PI*f)/PI*f
+        if f<=2*PI and f>PI:
+        	f = f-2*PI
+        if(f == 0): return N
+        return abs(2*np.sin(N*f/2)/f)
+
+
+    def rect(self, x):
+        return float(x<N and x > 0)
 
 
 class Video2(Scene):
