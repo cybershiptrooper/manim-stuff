@@ -29,7 +29,7 @@ class Video1(GraphScene):
         self.wait();
         text = TextMobject("Consider a rectangular pulse-")
         math = TexMobject("x_{N}[n] = "
-        	"\\begin{cases} 1,& \\text{if } 0 < n \\l N\\\\ 0  & \\text{otherwise} \\end{cases}"
+        	"\\begin{cases} 1,& \\text{if } 0 \\leq n < N\\\\ 0  & \\text{otherwise} \\end{cases}"
         	)
         VGroup(text, math).arrange(DOWN)
         self.play(
@@ -39,7 +39,7 @@ class Video1(GraphScene):
         self.wait()
         text2 = TextMobject("Let us visualise $x_{}$".format(N))
         math_new = TexMobject("x_{N}[n] = "
-        	"\\begin{cases} 1,& \\text{if } |n|\\leq" +str(N/2)+"\\\\ 0  & \\text{otherwise} \\end{cases}"
+        	"\\begin{cases} 1,& \\text{if } 0 \\leq n <" +str(N/2)+"\\\\ 0  & \\text{otherwise} \\end{cases}"
         	)
         math_new.to_corner(UP + LEFT)
         self.play(
@@ -150,6 +150,8 @@ class Video1(GraphScene):
     		text.arrange(RIGHT, center=False, aligned_edge=LEFT) 
     		text.scale(0.7)
     		self.play(Write(text))
+    	self.play(FadeOut(func_graph))
+        self.wait(2)
     	self.wait(2)
     	self.clear()
 
@@ -195,7 +197,7 @@ class Video1(GraphScene):
 
 
     def rect(self, x):
-        return float(x<N and x > 0)
+        return float(x<N and x >= 0)
 
 
 class Video2(Scene):
