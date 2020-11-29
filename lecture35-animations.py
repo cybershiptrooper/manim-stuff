@@ -22,7 +22,7 @@ class Video1(GraphScene):
     
     
     def construct(self):
-        title = TextMobject("Part 1- Vizualising the DFT")
+        title = TextMobject("Part 1- DFT as samples of DTFT")
         self.play(Write(title))
         self.wait()
         self.play(FadeOut(title));
@@ -69,7 +69,7 @@ class Video1(GraphScene):
             FadeOut(fourier)
         )
         text = TextMobject("Now we will sample $|X(w)|$\n"
-        	"at $\\frac{kw}{"+str(N/2)+"}$")
+        	"at $w=\\frac{2\\pi k}{"+str(N/2)+"}$")
         text2 = TextMobject("where $k\\in {0,1,.."+str(N-1)+"}$")
 
         VGroup(text, text2).arrange(DOWN)
