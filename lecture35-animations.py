@@ -57,7 +57,7 @@ class Video1(GraphScene):
         	FadeOut(math),
         	)
         text = TextMobject("The fourier transform of this function is")
-        string = "X(w) = \\frac{1-exp(-jw)}{1-exp(-jw/"+str(N)+")}"
+        string = "X(w) = \\frac{1-exp(-j"+str(N)+"w)}{1-exp(-jw)}"
         fourier = TexMobject(string)
         VGroup(text, fourier).arrange(DOWN)
         self.play(Write(text))
@@ -81,6 +81,17 @@ class Video1(GraphScene):
         self.play(FadeOut(text))
         self.drawsinc()
         self.wait()
+        text = TextMobject("Observe that the samples are the DFT\n of our initial function:")
+        math = TexMobject("x_{N}[n] = "
+            "\\begin{cases} 1,& \\text{if } 0 \\leq n < N\\\\ 0  & \\text{otherwise} \\end{cases}"
+            )
+        VGroup(text, math).arrange(DOWN)
+        self.play(Write(text),)
+        self.wait()
+        self.play(FadeInFrom(math, UP))
+        self.wait()
+        self.play(FadeOut(text), FadeOut(math))
+
 
     def drawrect(self):
         self.setup_axespt1()
@@ -199,13 +210,13 @@ class Video1(GraphScene):
         return float(x<N and x >= 0)
 
 
-class Video2(Scene):
-    def construct(self):
-        title = TextMobject("Part 1")
-        self.play(Write(title))
-        self.wait()
-        self.play(FadeOut(title));
-        self.wait();
+# class Video2(Scene):
+#     def construct(self):
+#         title = TextMobject("Part 1")
+#         self.play(Write(title))
+#         self.wait()
+#         self.play(FadeOut(title));
+#         self.wait();
 
 
 #todo:
