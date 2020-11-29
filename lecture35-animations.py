@@ -57,7 +57,7 @@ class Video1(GraphScene):
         	FadeOut(math),
         	)
         text = TextMobject("The fourier transform of this function is")
-        string = "X(w) = \\frac{2sin({" +str(N/2) +"}w)}{w}"
+        string = "X(w) = \\frac{1-exp(-jw)}{1-exp(-jw/"+str(N)+")}"
         fourier = TexMobject(string)
         VGroup(text, fourier).arrange(DOWN)
         self.play(Write(text))
@@ -151,7 +151,6 @@ class Video1(GraphScene):
     		text.scale(0.7)
     		self.play(Write(text))
     	self.play(FadeOut(func_graph))
-        self.wait(2)
     	self.wait(2)
     	self.clear()
 
