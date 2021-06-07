@@ -1,5 +1,6 @@
 *.pyc
 *.bak
+*.tmp
 .DS_Store
 homeless.py
 playground.py
